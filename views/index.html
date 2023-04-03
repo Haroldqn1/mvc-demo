@@ -17,7 +17,8 @@
   <div class="container mt-2">
 
     <button  type="button" class="btn btn-primary btn-sm" id="cargar-datos">Cargar datos</button>
-    <button  type="button" class="btn btn-danger btn-sm" id="boto-pruebas">Boton de pruebas</button>
+    <button  type="button" class="btn btn-danger btn-sm" id="boton-prubas">Boton de pruebas</button>
+    
     <hr>
     <table class="table table-sthiped table-sm" id="tabla-cursos">
       <thead>
@@ -50,15 +51,42 @@
   <script>
     $(document).ready(function(){
 
-      function mostarDatos(){
+      function mostrarDatos(){
         //Comunicacion asincrona/AJAX con el controlador
         $.ajax({
-          
-        });
-      }
+          url:'../controllers/curso.controller.php',
+          type:'POST',
+          data:{
+            operacion : 'listar'
+          },
+          dataType: 'JSON',
+          success: function(result){
+            if (result.length > 0){
+              //console.log(result);
+              const listarCursos = result;
+
+              //Antes de ejecutar el recorrido de registros, riniciamos la tabla
+              $("#tabla-cursos tbody").html("");
+
+              listarCursos.forEach(curso => {
+                let nuevaFila = ``;
+                nuevaFila += `<tr>`;
+                nuevaFila += `<td>${curso['id']}</td>`;
+                nuevaFila += `<td>${curso['nombre']}</td>`;
+                nuevaFila += `<td>${curso['nivel']}</td>`;
+                nuevaFila += `<td>${curso['precio']}</td>`;
+                nuevaFila += `<td>${curso['horas']}</td>`;
+                nuevaFila += `</tr>`;
+                $("#tabla-cursos tbody").append(nuevaFila);
+              }
+              );
+            }
+          } // Fin de success
+        }); // Fin de AJAX
+      } // Fin de mostrarDatos
 
       //Controlamos el botón
-      $("#cargar-datos").click(mostarDatos);
+      $("#cargar-datos").click(mostrarDatos);
     });
   </script>
 
